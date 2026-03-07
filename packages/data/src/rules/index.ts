@@ -79,6 +79,7 @@ import { salesforceRules } from "./salesforce";
 import { softwareCraftsmanshipRules } from "./software-craftsmanship";
 import { sanityRules } from "./sanity";
 import { scoutRules } from "./scout";
+import { shopifyAppExtensionUiDevelopmentRules } from "./shopify-app-extension-ui-development";
 import { shopifyThemeRules } from "./shopify-theme-development";
 import { solanaRules } from "./solana";
 import { solidityRules } from "./solidity";
@@ -202,6 +203,7 @@ export const rules: Rule[] = [
   ...viewComfyRules,
   ...rushRules,
   ...phpRules,
+  ...shopifyAppExtensionUiDevelopmentRules,
   ...shopifyThemeRules,
   ...RRules,
   ...zettelkastenRules,
