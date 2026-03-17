@@ -1,6 +1,6 @@
 ---
-title: Shopify App UI Extension Development
-slug: shopify-app-ui-extension-development
+title: Shopify App Extension Typescript Conversion
+slug: shopify-app-extension-typescript-conversion
 tags:
   - Shopify
   - App Extension
@@ -31,9 +31,11 @@ Shopify Checkout UI Extensions can be written in TypeScript (`.tsx`) instead of 
 ## Conversion Steps
 
 ### 1. Rename the file
+
 - Change `src/Checkout.jsx` → `src/Checkout.tsx`
 
 ### 2. Update `shopify.extension.toml`
+
 ```toml
 [[extensions.targeting]]
 module = "./src/Checkout.tsx"  # Changed from .jsx
@@ -41,24 +43,28 @@ target = "purchase.checkout.block.render"
 ```
 
 ### 3. Update `shopify.d.ts`
-```typescript
-import '@shopify/ui-extensions';
 
-declare module './src/Checkout.tsx' {  // Changed from .jsx
-  const shopify: import('@shopify/ui-extensions/purchase.checkout.block.render').Api;
+```typescript
+import "@shopify/ui-extensions";
+
+declare module "./src/Checkout.tsx" {
+  // Changed from .jsx
+  const shopify: import("@shopify/ui-extensions/purchase.checkout.block.render").Api;
   const globalThis: { shopify: typeof shopify };
 }
 ```
 
 ### 4. Update `tsconfig.json`
+
 Remove `checkJs` and `allowJs`, add `strict`:
+
 ```json
 {
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "target": "ES2020",
-    "strict": true,  // Add this
+    "strict": true, // Add this
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -78,30 +84,30 @@ Add type definitions for your settings and component props:
 
 ```typescript
 // Common types
-type PaddingKeyword = 'none' | 'small' | 'small-100' | 'base' | 'large' | 'large-100';
-type JustifyContent = 'start' | 'center' | 'end';
-type Tone = 'auto' | 'neutral' | 'info' | 'success' | 'warning' | 'critical' | 'custom';
+type PaddingKeyword = "none" | "small" | "small-100" | "base" | "large" | "large-100";
+type JustifyContent = "start" | "center" | "end";
+type Tone = "auto" | "neutral" | "info" | "success" | "warning" | "critical" | "custom";
 
 // Example usage
 const paddingMap: Record<string, PaddingKeyword> = {
-  'none': 'none',
-  'extraTight': 'small',
+  none: "none",
+  extraTight: "small"
   // ...
 };
-const safePadding: PaddingKeyword = paddingMap[paddingValue] || 'none';
+const safePadding: PaddingKeyword = paddingMap[paddingValue] || "none";
 ```
 
 ### 6. Type Your Variables
 
 ```typescript
 // Before (JSX)
-const text = String(settings?.text || '');
-const padding = String(settings?.padding || 'none');
+const text = String(settings?.text || "");
+const padding = String(settings?.padding || "none");
 
 // After (TSX)
-const text: string = String(settings?.text || '');
-const padding: string = String(settings?.padding || 'none');
-const safePadding: PaddingKeyword = paddingMap[padding] || 'none';
+const text: string = String(settings?.text || "");
+const padding: string = String(settings?.padding || "none");
+const safePadding: PaddingKeyword = paddingMap[padding] || "none";
 ```
 
 ### 7. Type JSX Elements
@@ -132,47 +138,51 @@ if (condition) {
 ## Common Type Patterns
 
 ### Settings Values
+
 ```typescript
 // Settings from shopify.settings.value can be: string | number | boolean | null | undefined
-const text = String(settings?.text || '');
-const number = typeof settings?.number === 'number' ? settings.number : 0;
+const text = String(settings?.text || "");
+const number = typeof settings?.number === "number" ? settings.number : 0;
 const enabled = Boolean(settings?.enabled);
 ```
 
 ### Padding/Spacing Values
+
 ```typescript
-type PaddingKeyword = 'none' | 'small' | 'small-100' | 'base' | 'large' | 'large-100';
+type PaddingKeyword = "none" | "small" | "small-100" | "base" | "large" | "large-100";
 const paddingMap: Record<string, PaddingKeyword> = {
-  'none': 'none',
-  'extraTight': 'small',
-  'tight': 'small-100',
-  'base': 'base',
-  'loose': 'large',
-  'extraLoose': 'large-100'
+  none: "none",
+  extraTight: "small",
+  tight: "small-100",
+  base: "base",
+  loose: "large",
+  extraLoose: "large-100"
 };
 ```
 
 ### Tone/Appearance Values
+
 ```typescript
-type Tone = 'auto' | 'neutral' | 'info' | 'success' | 'warning' | 'critical' | 'custom';
+type Tone = "auto" | "neutral" | "info" | "success" | "warning" | "critical" | "custom";
 const toneMap: Record<string, Tone> = {
-  'normal': 'auto',
-  'accent': 'neutral',
-  'subdued': 'neutral',
-  'info': 'info',
-  'success': 'success',
-  'warning': 'warning',
-  'critical': 'critical',
-  'decorative': 'custom'
+  normal: "auto",
+  accent: "neutral",
+  subdued: "neutral",
+  info: "info",
+  success: "success",
+  warning: "warning",
+  critical: "critical",
+  decorative: "custom"
 };
 ```
 
 ## Example: Complete Conversion
 
 **Before (Checkout.jsx):**
+
 ```jsx
-import '@shopify/ui-extensions/preact';
-import { render } from 'preact';
+import "@shopify/ui-extensions/preact";
+import { render } from "preact";
 
 export default async () => {
   render(<Extension />, document.body);
@@ -180,15 +190,16 @@ export default async () => {
 
 function Extension() {
   const settings = shopify.settings.value;
-  const text = String(settings?.text || '');
+  const text = String(settings?.text || "");
   return <s-text>{text}</s-text>;
 }
 ```
 
 **After (Checkout.tsx):**
+
 ```tsx
-import '@shopify/ui-extensions/preact';
-import { render } from 'preact';
+import "@shopify/ui-extensions/preact";
+import { render } from "preact";
 
 export default async () => {
   render(<Extension />, document.body);
@@ -196,7 +207,7 @@ export default async () => {
 
 function Extension() {
   const settings = shopify.settings.value;
-  const text: string = String(settings?.text || '');
+  const text: string = String(settings?.text || "");
   return <s-text>{text}</s-text>;
 }
 ```
